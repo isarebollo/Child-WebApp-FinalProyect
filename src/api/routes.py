@@ -114,10 +114,10 @@ def modificar_info_usuario():
     usuario = Usuario.query.get(usuario_id)
     if usuario is None:
         raise APIException("Usuario no encontrado")
-    provincia = body['provincia']
+    # provincia = body['provincia']
     numero_de_hijos = body['numero_hijos']
-    if provincia is not None:
-        usuario.provincia = body['provincia']
+    # if provincia is not None:
+    #     usuario.provincia = body['provincia']
     if numero_de_hijos is not None:
         usuario.numero_hijos = body['numero_hijos']
     db.session.commit()
