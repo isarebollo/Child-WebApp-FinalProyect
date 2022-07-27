@@ -11,11 +11,11 @@ import { Navbar } from "../component/navbar.jsx";
 
 export const MiPerfil = () => {
 
-  const [numero_hijos, setNumero_hijos] = useState(0);
-  const [provincia, setProvincia] = useState("hola");
- 
+  const [numero_hijos, setNumero_hijos] = useState(1);
+  const [provincia, setProvincia] = useState("");
+
   const { store, actions } = useContext(Context)
-  const [datos, obtenerDatos] = useState([]);
+  const [datos, obtenerDatos] = useState({});
   const navigate = useNavigate()
 
   // OBTENER DATOS USUARIO
@@ -37,10 +37,10 @@ export const MiPerfil = () => {
         return res.json();
       })
       .then((data) => {
-
         console.log("soy la data", data.data);
-        obtenerDatos(data.data)
-
+        obtenerDatos(data.data);
+        setNumero_hijos(data.data.numero_hijos);
+        setProvincia(data.data.provincia);
       })
       .catch((e) => {
         console.error(e);
@@ -56,26 +56,22 @@ export const MiPerfil = () => {
 
 
   const updateText = (e, setState) => {
-    // if (value == datos.numero_hijos) 
-    
     const value = e.target.value;
-    console.log("soy la e: ",e)
-    console.log("soy el numero de hijos: ", datos.numero_hijos )
-   
+    
+    console.log("soy el numero de hijos: ", datos.numero_hijos)
+
     console.log("soy el nuevo value:", value)
     setState(value);
   };
 
   const onSave = async (e) => {
-   
     const token = localStorage.getItem(config.jwt.nameToken);
     const body = JSON.stringify({
-
       numero_hijos,
       provincia
     });
 
-    await fetch(HOSTNAME + "/perfil/modificar", {
+    const res = await fetch(HOSTNAME + "/perfil/modificar", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -84,72 +80,71 @@ export const MiPerfil = () => {
       body,
     });
 
+    if (res.status !== 200) {
+      alert("No se pudo actualizar la data"); // TODO: check it.
+      return;
+    }
+
+    else if (res.status == 200) {
+      alert("se actualizaron los campos correctamente"); // TODO: check it.
+      return;
+    }
+
+    const json = await res.json();
+    const data = json.data;
+    obtenerDatos({
+      ...datos,
+      provincia: data.provincia,
+      numero_hijos: data.numero_hijos,      
+    })
+    
   };
-
-  const guardarnumerohijos = async (e) => {
-   
-    const token = localStorage.getItem(config.jwt.nameToken);
-    const body = JSON.stringify({
-
-      numero_hijos
-    });
-
-    await fetch(HOSTNAME + "/perfil/modificar", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body,
-    });
-
-  };
-
-return (
-  <>
-  <Navbar/>
-    <div className="container" id="containerRegister">
-      <div className="row g-3">
-        <div className="col-md-12">
-          <label className="form-label">Nombre Completo: </label>
-
-          <h5>{datos.nombre}</h5>
-        </div>
-
+  
+  return (
+    <>
+      <Navbar />
+      <div className="container" id="containerRegister">
         <div className="row g-3">
-          <div className="col-md-6">
-            <label className="form-label">Email</label>
-            {/* <h5>{datos.email}</h5> */}
-            <h5>{datos.provincia}</h5>
+          <div className="col-md-12">
+            <label className="form-label">Nombre Completo: </label>
+
+            <h5>{datos.nombre}</h5>
           </div>
 
-          {/* <div className="col-md-6">
+          <div className="row g-3">
+            <div className="col-md-6">
+              <label className="form-label">Email</label>
+              {/* <h5>{datos.email}</h5> */}
+              <h5>{datos.provincia}</h5>
+            </div>
+
+            <div className="col-md-6">
             <label className="form-label">Hijos</label>
             <h5>{datos.numero_hijos}</h5>
-          </div> */}
-        </div>
+          </div>
+          </div>
 
-        <div className="col-md-6">
-          <label className="form-label">Numero Hijos</label>
-          <input
-            onChange={(e) => updateText(e, setNumero_hijos)}
-            // placeholder= {datos.numero_hijos}
-            // value={numero_hijos}
-            value={datos.numero_hijos}
-            // defaultValue={datos.numero_hijos}
-            type="number"
-            className="form-control"
+          <div className="col-md-6">
+            <label className="form-label">Numero Hijos</label>
+            <input
+              onChange={(e) => updateText(e, setNumero_hijos)}
+              // placeholder= {datos.numero_hijos}
+              // value={numero_hijos}
+              // value={datos.numero_hijos}
+              defaultValue={datos.numero_hijos}
+              type="number"
+              className="form-control"
 
-          ></input><button className="btn btn-info button" onClick={guardarnumerohijos} >Guardar</button>
-        </div>
+            ></input>
+          </div>
 
-        <div className="col-md-6">
-          <label className="form-label">Lista Hijos</label>
-          <div><FormularioHijos /></div>
-        </div>
+          <div className="col-md-6">
+            <label className="form-label">Lista Hijos</label>
+            <div><FormularioHijos /></div>
+          </div>
 
 
-         <div className="col-md-4">
+          <div className="col-md-4">
             <label className="form-label">Provincia</label>
             <select
               onChange={(e) => updateText(e, setProvincia)}
@@ -158,8 +153,8 @@ return (
               // defaultValue={datos.provincia}
               className="form-select"
             >
-              
-              <option defaultValue= {datos.provincia}>{datos.provincia}</option> 
+
+              <option defaultValue={datos.provincia}>{datos.provincia}</option>
               <option value="Álava">Álava</option>
               <option value="Albacete">Albacete</option>
               <option value="Alicante">Alicante</option>
@@ -212,20 +207,20 @@ return (
             </select>
           </div>
 
-        <div className="col-12">
-          <button
-            // disabled={deshabilitado}
-            onClick={onSave}
-            id="buttonRegister"
-            type="submit"
-            className="btn btn-info button"
-          >
-            Save
-          </button>
+          <div className="col-12">
+            <button
+              // disabled={deshabilitado}
+              onClick={onSave}
+              id="buttonRegister"
+              type="submit"
+              className="btn btn-info button"
+            >
+              Save
+            </button>
+          </div>
         </div>
       </div>
-    </div>
 
-  </>
-);
+    </>
+  );
 };

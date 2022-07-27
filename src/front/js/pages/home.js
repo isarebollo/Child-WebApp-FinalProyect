@@ -20,9 +20,9 @@ export const Home = () => {
               name={actividad.nombre}
               src={actividad.imagen}
               text={actividad.descripcion}
-              tipo={actividad.tipo_de_actividad}
-              button=" Logeate y unete! "
-              route={"login"}
+              // tipo={actividad.tipo_de_actividad}
+              // button=" Logeate y unete! "
+              // route={"login"}
             />
         );
       });
@@ -34,7 +34,7 @@ export const Home = () => {
 
   return (
     <>
-      {/* Forma 1 */}
+      
       <Navbar/>
       <div className="container ">
         <div
@@ -99,48 +99,9 @@ export const Home = () => {
           </button>
         </div>
       </div>
+<button className="btn btn-info button"> </button>
 
-      {/* --------
-    Forma2 */}
-
-      {/* <div className="container">
-        <div className="text-center mt-5">
-          <div
-            id="carouselExampleInterval"
-            className="carousel slide"
-            data-bs-ride="carousel"
-          >
-            <div className="carousel-inner">
-              <ImagenesCarrusel/>
-            </div>
-            <button
-              className="carousel-control-prev"
-              type="button"
-              data-bs-target="#carouselExampleInterval"
-              data-bs-slide="prev"
-            >
-              <span
-                className="carousel-control-prev-icon"
-                aria-hidden="true"
-              ></span>
-              <span className="visually-hidden">Previous</span>
-            </button>
-            <button
-              className="carousel-control-next"
-              type="button"
-              data-bs-target="#carouselExampleInterval"
-              data-bs-slide="next"
-            >
-              <span
-                className="carousel-control-next-icon"
-                aria-hidden="true"
-              ></span>
-              <span className="visually-hidden">Next</span>
-            </button>
-          </div>
-        </div>
-      </div>  */}
-      {/* ---- */}
+      
     </>
   );
 };
